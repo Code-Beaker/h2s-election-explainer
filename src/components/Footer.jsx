@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Vote, Globe, MessageCircle, Users, ExternalLink } from 'lucide-react';
 
 const Footer = () => {
@@ -21,9 +22,9 @@ const Footer = () => {
           <div className="footer-links">
             <h4>Quick Links</h4>
             <ul>
-              <li><a href="#timeline">Process</a></li>
-              <li><a href="#assistant">AI Assistant</a></li>
-              <li><a href="#checklist">Voter Checklist</a></li>
+              <li><a href="/#timeline">Process</a></li>
+              <li><Link to="/chat">AI Assistant</Link></li>
+              <li><a href="/#checklist">Voter Checklist</a></li>
             </ul>
           </div>
           
