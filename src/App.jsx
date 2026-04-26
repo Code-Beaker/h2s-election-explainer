@@ -1,23 +1,20 @@
 import React from 'react';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import Timeline from './components/Timeline';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
 import ChatBot from './components/ChatBot';
-import Checklist from './components/Checklist';
-import Footer from './components/Footer';
 
 function App() {
   return (
-    <div className="app-container">
-      <Navbar />
-      <main>
-        <Hero />
-        <Timeline />
-        <ChatBot />
-        <Checklist />
-      </main>
-      <Footer />
-    </div>
+    <Router>
+      <div className="app-container">
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/chat" element={<ChatBot />} />
+          </Routes>
+        </main>
+      </div>
+    </Router>
   );
 }
 
