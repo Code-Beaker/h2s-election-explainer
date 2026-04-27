@@ -1,7 +1,7 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const { GoogleGenAI } = require('@google/genai');
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const { GoogleGenAI } = require("@google/genai");
 
 const app = express();
 app.use(cors());
@@ -22,10 +22,14 @@ If a user asks about anything else (e.g., coding, general knowledge, non-electio
 Keep your responses concise, educational, and easy to read. Do not use markdown headers unless necessary, keep it conversational.
 `;
 
-app.post('/api/chat', async (req, res) => {
+app.post("/api/chat", async (req, res) => {
   try {
     if (!ai) {
-      return res.status(500).json({ error: "Gemini API client not initialized. Check your API key." });
+      return res
+        .status(500)
+        .json({
+          error: "Gemini API client not initialized. Check your API key.",
+        });
     }
 
     const { history, message } = req.body;
@@ -34,31 +38,31 @@ app.post('/api/chat', async (req, res) => {
       return res.status(400).json({ error: "Message is required." });
     }
 
-    // Convert the frontend history format {type: 'user'|'bot', text: ''} 
+    // Convert the frontend history format {type: 'user'|'bot', text: ''}
     // to the Gemini history format {role: 'user'|'model', parts: [{text: ''}]}
-    const formattedHistory = (history || []).map(msg => ({
-      role: msg.type === 'bot' ? 'model' : 'user',
-      parts: [{ text: msg.text }]
+    const formattedHistory = (history || []).map((msg) => ({
+      role: msg.type === "bot" ? "model" : "user",
+      parts: [{ text: msg.text }],
     }));
 
     // Add the system instruction context as the first message
     const chatSession = await ai.chats.create({
-      model: 'gemini-2.5-flash',
+      model: "gemini-2.5-flash",
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
         temperature: 0.7,
-      }
+      },
     });
 
     // To simulate history with system instructions, we could theoretically just pass history into chats.create
     // However, the GenAI SDK prefers you to create a chat session and optionally pass history in the config.
     // We will just recreate the chat session with history if available.
     const chat = ai.chats.create({
-      model: 'gemini-2.5-flash',
+      model: "gemini-2.5-flash",
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
         temperature: 0.7,
-      }
+      },
     });
 
     // Wait! The new v2 SDK doesn't allow pushing history easily after creation if you want to use the `.sendMessage` convenience method.
@@ -66,23 +70,24 @@ app.post('/api/chat', async (req, res) => {
 
     const contents = [
       ...formattedHistory,
-      { role: 'user', parts: [{ text: message }] }
+      { role: "user", parts: [{ text: message }] },
     ];
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: "gemini-2.5-flash",
       contents: contents,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
         temperature: 0.7,
-      }
+      },
     });
 
     res.json({ reply: response.text });
-
   } catch (error) {
     console.error("Gemini API Error:", error);
-    res.status(500).json({ error: "Failed to generate a response from CivicBot." });
+    res
+      .status(500)
+      .json({ error: "Failed to generate a response from CivicBot." });
   }
 });
 
