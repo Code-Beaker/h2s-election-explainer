@@ -201,6 +201,9 @@ const ChatBot = () => {
       {/* Main Chat Area */}
       <main className="chat-main-area">
         <div className="chat-main-header">
+          <Link to="/" className="mobile-back-btn">
+            <ArrowLeft size={20} />
+          </Link>
           <div className="current-bot">
             <span className="bot-name">CivicBot</span>
             <div className="powered-by">
