@@ -45,27 +45,8 @@ app.post("/api/chat", async (req, res) => {
       parts: [{ text: msg.text }],
     }));
 
-    // Add the system instruction context as the first message
-    const chatSession = await ai.chats.create({
-      model: "gemini-2.5-flash",
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTION,
-        temperature: 0.7,
-      },
-    });
-
-    // To simulate history with system instructions, we could theoretically just pass history into chats.create
-    // However, the GenAI SDK prefers you to create a chat session and optionally pass history in the config.
-    // We will just recreate the chat session with history if available.
-    const chat = ai.chats.create({
-      model: "gemini-2.5-flash",
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTION,
-        temperature: 0.7,
-      },
-    });
-
-    // Wait! The new v2 SDK doesn't allow pushing history easily after creation if you want to use the `.sendMessage` convenience method.
+    // The new v2 SDK doesn't allow pushing history easily after creation if you want to use the `.sendMessage` convenience method.
+    // Instead, we can just use the `models.generateContent` method with the full history array for maximum control.
     // Instead, we can just use the `models.generateContent` method with the full history array for maximum control.
 
     const contents = [
