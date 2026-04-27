@@ -34,8 +34,22 @@ app.post("/api/chat", async (req, res) => {
 
     const { history, message } = req.body;
 
-    if (!message) {
-      return res.status(400).json({ error: "Message is required." });
+    // Security: Input Validation
+    if (!message || typeof message !== "string") {
+      return res.status(400).json({ error: "Message is required and must be a string." });
+    }
+
+    const trimmedMessage = message.trim();
+    if (!trimmedMessage) {
+      return res.status(400).json({ error: "Message cannot be empty." });
+    }
+
+    if (trimmedMessage.length > 1000) {
+      return res.status(400).json({ error: "Message is too long. Maximum 1000 characters allowed." });
+    }
+
+    if (history && !Array.isArray(history)) {
+      return res.status(400).json({ error: "History must be an array." });
     }
 
     // Convert the frontend history format {type: 'user'|'bot', text: ''}
@@ -47,11 +61,10 @@ app.post("/api/chat", async (req, res) => {
 
     // The new v2 SDK doesn't allow pushing history easily after creation if you want to use the `.sendMessage` convenience method.
     // Instead, we can just use the `models.generateContent` method with the full history array for maximum control.
-    // Instead, we can just use the `models.generateContent` method with the full history array for maximum control.
 
     const contents = [
       ...formattedHistory,
-      { role: "user", parts: [{ text: message }] },
+      { role: "user", parts: [{ text: trimmedMessage }] },
     ];
 
     const response = await ai.models.generateContent({

@@ -33,8 +33,22 @@ module.exports = async (req, res) => {
   try {
     const { history, message } = req.body;
 
-    if (!message) {
-      return res.status(400).json({ error: "Message is required." });
+    // Security: Input Validation
+    if (!message || typeof message !== "string") {
+      return res.status(400).json({ error: "Message is required and must be a string." });
+    }
+
+    const trimmedMessage = message.trim();
+    if (!trimmedMessage) {
+      return res.status(400).json({ error: "Message cannot be empty." });
+    }
+
+    if (trimmedMessage.length > 1000) {
+      return res.status(400).json({ error: "Message is too long. Maximum 1000 characters allowed." });
+    }
+
+    if (history && !Array.isArray(history)) {
+      return res.status(400).json({ error: "History must be an array." });
     }
 
     const formattedHistory = (history || []).map(msg => ({
@@ -44,7 +58,7 @@ module.exports = async (req, res) => {
 
     const contents = [
       ...formattedHistory,
-      { role: 'user', parts: [{ text: message }] }
+      { role: 'user', parts: [{ text: trimmedMessage }] }
     ];
 
     const response = await ai.models.generateContent({
