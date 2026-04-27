@@ -173,6 +173,14 @@ const ChatBot = () => {
                 key={chat.id}
                 className={`history-item-wrapper ${chat.id === activeChatId ? "active" : ""}`}
                 onClick={() => setActiveChatId(chat.id)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setActiveChatId(chat.id);
+                  }
+                }}
               >
                 <div className="history-item">
                   <MessageSquare size={16} />
@@ -182,6 +190,7 @@ const ChatBot = () => {
                   className="delete-chat-btn"
                   onClick={(e) => handleDeleteChat(chat.id, e)}
                   title="Delete chat"
+                  aria-label="Delete chat"
                 >
                   <Trash2 size={14} />
                 </button>

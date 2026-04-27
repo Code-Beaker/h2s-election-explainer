@@ -102,6 +102,7 @@ const Timeline = () => {
                 onClick={() => setActiveStep(step.id)}
                 className={`timeline-nav-item ${activeStep === step.id ? 'active' : ''}`}
                 style={{ '--step-color': step.color }}
+                aria-current={activeStep === step.id ? "step" : undefined}
               >
                 <div className="step-num">{step.id}</div>
                 <div className="step-label">{step.title}</div>

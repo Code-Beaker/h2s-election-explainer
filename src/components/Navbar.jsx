@@ -65,6 +65,7 @@ const Navbar = () => {
               <button
                 className="modal-close"
                 onClick={() => setIsModalOpen(false)}
+                aria-label="Close registration modal"
               >
                 <X size={20} />
               </button>

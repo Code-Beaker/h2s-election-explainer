@@ -61,24 +61,26 @@ const Checklist = () => {
             </div>
           </div>
 
-          <div className="tasks-container card">
+          <ul className="tasks-container card" style={{ listStyle: 'none', padding: 0 }}>
             {tasks.map(task => (
-              <div 
-                key={task.id} 
-                className={`task-item ${task.completed ? 'completed' : ''}`}
-                onClick={() => toggleTask(task.id)}
-              >
-                <div className="task-checkbox">
-                  {task.completed ? (
-                    <CheckCircle2 size={24} color="var(--secondary)" />
-                  ) : (
-                    <Circle size={24} color="var(--border)" />
-                  )}
-                </div>
-                <span className="task-text">{task.text}</span>
-              </div>
+              <li key={task.id} style={{ margin: 0, padding: 0 }}>
+                <button 
+                  className={`task-item ${task.completed ? 'completed' : ''}`}
+                  onClick={() => toggleTask(task.id)}
+                  style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', fontFamily: 'inherit', fontSize: 'inherit', color: 'inherit' }}
+                >
+                  <div className="task-checkbox">
+                    {task.completed ? (
+                      <CheckCircle2 size={24} color="var(--secondary)" />
+                    ) : (
+                      <Circle size={24} color="var(--border)" />
+                    )}
+                  </div>
+                  <span className="task-text">{task.text}</span>
+                </button>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </div>
 
