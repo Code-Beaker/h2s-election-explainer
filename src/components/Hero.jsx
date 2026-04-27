@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ChevronRight, PlayCircle } from 'lucide-react';
+import { ChevronRight, PlayCircle, MessageSquare } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Hero = () => {
   return (
@@ -20,12 +21,12 @@ const Hero = () => {
             of the Indian election process.
           </p>
           <div className="hero-btns">
-            <button className="btn btn-primary">
-              Start Explainer <ChevronRight size={20} />
-            </button>
-            <button className="btn btn-outline">
+            <Link to="/chat" className="btn btn-primary" style={{ textDecoration: 'none' }}>
+              Ask Assistant <MessageSquare size={20} />
+            </Link>
+            <a href="https://youtu.be/gIdo77PCeH8?si=h-Nh_CG3pAvG2rS4" target="_blank" rel="noreferrer" className="btn btn-outline" style={{ textDecoration: 'none' }}>
               <PlayCircle size={20} /> Watch How it Works
-            </button>
+            </a>
           </div>
         </motion.div>
         
