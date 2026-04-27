@@ -10,7 +10,14 @@ const Navbar = () => {
 
   const handleEligible = () => {
     setIsModalOpen(false);
-    navigate("/#checklist");
+    if (window.location.pathname === "/") {
+      const element = document.getElementById("checklist");
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      navigate("/#checklist");
+    }
   };
 
   return (
