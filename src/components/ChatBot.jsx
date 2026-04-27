@@ -2,19 +2,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, User, Bot, Sparkles, Plus, MessageSquare, Vote, ArrowLeft, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
-const initialMessages = [
-  { id: 1, type: 'bot', text: "Namaste! I'm CivicBot, your Indian Election Assistant. How can I help you today?" }
-];
+const initialMessages = [];
 
-const qaPairs = {
-  "registration": "To register, visit voters.eci.gov.in (NVSP portal). You'll need Form 6 for a new registration. You must be 18 or older as of the qualifying date.",
-  "documents": "Commonly accepted documents include Aadhaar Card, PAN Card, Driving License, Indian Passport, or Bank Passbook with a photograph.",
-  "polling": "On polling day, take your Voter ID (EPIC) or any other approved ID proof to your polling station. You can find your polling booth on the ECI Voter Helpline App.",
-  "evm": "Electronic Voting Machines (EVMs) are secure, stand-alone machines. Each vote is recorded electronically, and a VVPAT slip is generated for you to verify your choice.",
-  "results": "Results are declared on the date announced by the ECI, usually a few days after the final phase of polling. You can track live results on results.eci.gov.in.",
-  "default": "I am CivicBot, an Indian Election Assistant. I can only provide information related to the election process, voting guidelines, required documents, EVMs, and polling stations. Please ask an election-related question."
-};
+// Note: The hardcoded qaPairs have been removed as we are now using Gemini API.
 
 const ChatBot = () => {
   // State for multiple chats
@@ -85,7 +78,7 @@ const ChatBot = () => {
     }));
   };
 
-  const handleSend = (text = input) => {
+  const handleSend = async (text = input) => {
     if (!text.trim()) return;
 
     const userMessage = { id: Date.now(), type: 'user', text };
@@ -93,7 +86,7 @@ const ChatBot = () => {
     
     // Auto-generate title for "New Chat" on first user message
     let newTitle = activeChat.title;
-    if (activeChat.title === 'New Chat' && updatedMessages.length === 2) {
+    if (activeChat.title === 'New Chat' && updatedMessages.length === 1) {
       newTitle = text.length > 20 ? text.substring(0, 20) + '...' : text;
     }
 
@@ -101,21 +94,38 @@ const ChatBot = () => {
     setInput('');
     setIsTyping(true);
 
-    // Mock bot response
-    setTimeout(() => {
-      let botText = qaPairs.default;
-      const lowerInput = text.toLowerCase();
-      
-      if (lowerInput.includes('register') || lowerInput.includes('apply')) botText = qaPairs.registration;
-      else if (lowerInput.includes('document') || lowerInput.includes('id')) botText = qaPairs.documents;
-      else if (lowerInput.includes('polling') || lowerInput.includes('vote') || lowerInput.includes('station')) botText = qaPairs.polling;
-      else if (lowerInput.includes('evm') || lowerInput.includes('machine')) botText = qaPairs.evm;
-      else if (lowerInput.includes('result') || lowerInput.includes('winner')) botText = qaPairs.results;
+    try {
+      // Pass the previous history (excluding the current message we just added) to the API
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          history: messages,
+          message: text
+        })
+      });
 
-      const botMessage = { id: Date.now() + 1, type: 'bot', text: botText };
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch response');
+      }
+
+      const botMessage = { id: Date.now() + 1, type: 'bot', text: data.reply };
       updateChatMessages(activeChatId, [...updatedMessages, botMessage]);
+    } catch (error) {
+      console.error('Chat Error:', error);
+      const errorMessage = { 
+        id: Date.now() + 1, 
+        type: 'bot', 
+        text: "I'm sorry, I'm having trouble connecting to my servers right now. Please try again later." 
+      };
+      updateChatMessages(activeChatId, [...updatedMessages, errorMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -176,7 +186,7 @@ const ChatBot = () => {
         </div>
 
         <div className="chat-messages-container" ref={messagesContainerRef}>
-          {messages.length <= 1 ? (
+          {messages.length === 0 ? (
             <div className="empty-state">
               <div className="empty-logo">
                 <Bot size={48} color="white" />
@@ -193,7 +203,15 @@ const ChatBot = () => {
                   </div>
                   <div className="message-content">
                     <div className="message-sender">{msg.type === 'bot' ? 'CivicBot' : 'You'}</div>
-                    <div className="message-text">{msg.text}</div>
+                    <div className="message-text markdown-body">
+                      {msg.type === 'bot' ? (
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {msg.text}
+                        </ReactMarkdown>
+                      ) : (
+                        msg.text
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
