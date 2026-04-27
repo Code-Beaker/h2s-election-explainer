@@ -146,7 +146,9 @@ const Timeline = () => {
                 </div>
                 
                 <div className="step-footer">
-                  <button className="btn btn-outline">Read Official Guide</button>
+                  <a href="https://www.eci.gov.in/voter-education" target="_blank" rel="noreferrer" className="btn btn-outline" style={{ textDecoration: 'none' }}>
+                    Read Official Guide
+                  </a>
                   <button 
                     className="btn btn-primary"
                     onClick={() => setActiveStep(prev => prev < 6 ? prev + 1 : 1)}
