@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, User, Bot, Sparkles, Plus, MessageSquare, Vote, ArrowLeft, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const initialMessages = [];
 
@@ -201,7 +203,15 @@ const ChatBot = () => {
                   </div>
                   <div className="message-content">
                     <div className="message-sender">{msg.type === 'bot' ? 'CivicBot' : 'You'}</div>
-                    <div className="message-text">{msg.text}</div>
+                    <div className="message-text markdown-body">
+                      {msg.type === 'bot' ? (
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {msg.text}
+                        </ReactMarkdown>
+                      ) : (
+                        msg.text
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
