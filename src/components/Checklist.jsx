@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Circle, Trophy } from 'lucide-react';
 
@@ -29,21 +29,23 @@ const Checklist = () => {
   const progress = Math.round((tasks.filter(t => t.completed).length / tasks.length) * 100);
 
   return (
-    <section id="checklist" className="checklist-section">
-      <div className="container">
-        <div className="checklist-layout">
-          <div className="checklist-info">
-            <h2>Your Voter <span>Checklist</span></h2>
-            <p>Track your preparation progress to ensure a smooth voting experience.</p>
+    <section id="checklist" className="py-24 bg-bg-primary">
+      <div className="max-w-[1200px] mx-auto px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+          <div className="flex flex-col gap-6">
+            <h2 className="text-4xl md:text-5xl font-heading font-bold text-text-primary">
+              Your Voter <span className="text-primary-main">Checklist</span>
+            </h2>
+            <p className="text-lg text-text-secondary">Track your preparation progress to ensure a smooth voting experience.</p>
             
-            <div className="progress-container card">
-              <div className="progress-header">
-                <span>Election Readiness</span>
-                <span className="percentage">{progress}%</span>
+            <div className="p-8 bg-bg-secondary border border-border-main rounded-2xl shadow-xl">
+              <div className="flex justify-between items-center mb-4">
+                <span className="font-medium text-text-primary">Election Readiness</span>
+                <span className="text-2xl font-bold text-primary-main">{progress}%</span>
               </div>
-              <div className="progress-bar-bg">
+              <div className="h-3 w-full bg-bg-tertiary rounded-full overflow-hidden">
                 <motion.div 
-                  className="progress-bar-fill"
+                  className="h-full bg-primary-main shadow-[0_0_15px_rgba(59,130,246,0.5)]"
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 1 }}
@@ -53,37 +55,43 @@ const Checklist = () => {
                 <motion.div 
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="completion-badge"
+                  className="mt-6 flex items-center justify-center gap-2 py-3 bg-secondary-main/10 text-secondary-main rounded-xl border border-secondary-main/20 font-bold"
                 >
-                  <Trophy size={16} /> You're ready to vote!
+                  <Trophy size={20} /> You&apos;re ready to vote!
                 </motion.div>
               )}
             </div>
           </div>
 
-          <ul className="tasks-container card" style={{ listStyle: 'none', padding: 0 }}>
+          <ul className="flex flex-col gap-3">
             {tasks.map(task => (
-              <li key={task.id} style={{ margin: 0, padding: 0 }}>
+              <li key={task.id}>
                 <button 
-                  className={`task-item ${task.completed ? 'completed' : ''}`}
+                  className={`w-full flex items-center gap-4 p-5 rounded-xl border transition-all text-left ${
+                    task.completed 
+                      ? 'bg-secondary-main/5 border-secondary-main/30' 
+                      : 'bg-bg-secondary border-border-main hover:border-border-focus'
+                  }`}
                   onClick={() => toggleTask(task.id)}
-                  style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', fontFamily: 'inherit', fontSize: 'inherit', color: 'inherit' }}
                 >
-                  <div className="task-checkbox">
+                  <div className="shrink-0">
                     {task.completed ? (
-                      <CheckCircle2 size={24} color="var(--secondary)" />
+                      <CheckCircle2 size={28} className="text-secondary-main" />
                     ) : (
-                      <Circle size={24} color="var(--border)" />
+                      <Circle size={28} className="text-border-main" />
                     )}
                   </div>
-                  <span className="task-text">{task.text}</span>
+                  <span className={`text-lg transition-all ${
+                    task.completed ? 'text-text-muted line-through opacity-70' : 'text-text-primary'
+                  }`}>
+                    {task.text}
+                  </span>
                 </button>
               </li>
             ))}
           </ul>
         </div>
       </div>
-
     </section>
   );
 };

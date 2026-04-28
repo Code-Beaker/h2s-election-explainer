@@ -26,13 +26,15 @@ describe('Checklist Component', () => {
     // Find the first task button
     const firstTaskButton = screen.getByText(/Check your name in the Voter List/i).closest('button');
     
-    // Initially not completed (assuming default state has class 'task-item' but not 'completed')
-    expect(firstTaskButton).not.toHaveClass('completed');
+    // Initially not completed (check for background color class)
+    expect(firstTaskButton).toHaveClass('bg-bg-secondary');
+    expect(firstTaskButton).not.toHaveClass('bg-secondary-main/5');
     
     // Click the task
     fireEvent.click(firstTaskButton);
     
     // Now it should be completed
-    expect(firstTaskButton).toHaveClass('completed');
+    expect(firstTaskButton).toHaveClass('bg-secondary-main/5');
+    expect(firstTaskButton).not.toHaveClass('bg-bg-secondary');
   });
 });
