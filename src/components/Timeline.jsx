@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UserPlus, Calendar, FileText, Megaphone, Fingerprint, BarChart3 } from 'lucide-react';
 
@@ -87,30 +87,43 @@ const Timeline = () => {
   const [activeStep, setActiveStep] = useState(1);
 
   return (
-    <section id="timeline" className="timeline-section">
-      <div className="container">
-        <div className="section-header">
-          <h2>Interactive Election <span>Journey</span></h2>
-          <p>Understand the 6 critical steps of the Indian democratic process.</p>
+    <section id="timeline" className="py-24 lg:py-32 bg-bg-primary border-t border-border-main/50">
+      <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-heading font-bold mb-4 text-text-primary">
+            Interactive Election <span className="text-primary-main">Journey</span>
+          </h2>
+          <p className="text-lg text-text-secondary">Understand the 6 critical steps of the Indian democratic process.</p>
         </div>
 
-        <div className="timeline-container">
-          <div className="timeline-nav">
+        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-12 lg:gap-16 items-start">
+          <div className="flex flex-col gap-4 sticky top-[100px]">
             {steps.map((step) => (
               <button 
                 key={step.id}
                 onClick={() => setActiveStep(step.id)}
-                className={`timeline-nav-item ${activeStep === step.id ? 'active' : ''}`}
-                style={{ '--step-color': step.color }}
+                className={`flex items-center gap-4 p-4 border rounded-md text-left transition-all ${
+                  activeStep === step.id 
+                    ? 'bg-bg-tertiary text-text-primary' 
+                    : 'bg-bg-secondary border-border-main text-text-secondary hover:text-text-primary'
+                }`}
+                style={{ borderColor: activeStep === step.id ? step.color : undefined }}
                 aria-current={activeStep === step.id ? "step" : undefined}
               >
-                <div className="step-num">{step.id}</div>
-                <div className="step-label">{step.title}</div>
+                <div 
+                  className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-colors ${
+                    activeStep === step.id ? 'text-white' : 'bg-bg-tertiary'
+                  }`}
+                  style={{ backgroundColor: activeStep === step.id ? step.color : undefined }}
+                >
+                  {step.id}
+                </div>
+                <div className="font-medium text-[0.95rem]">{step.title}</div>
               </button>
             ))}
           </div>
 
-          <div className="step-content-wrapper">
+          <div className="min-h-[500px]">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeStep}
@@ -118,40 +131,59 @@ const Timeline = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.4 }}
-                className="step-content card"
+                className="p-8 bg-bg-secondary border border-border-main rounded-2xl shadow-xl flex flex-col h-full"
               >
-                <div className="step-header">
-                  <div className="step-icon" style={{ backgroundColor: steps[activeStep-1].color }}>
+                <div className="flex items-center gap-6 mb-8 pb-6 border-b border-border-main">
+                  <div 
+                    className="w-14 h-14 rounded-xl flex items-center justify-center text-white shadow-lg"
+                    style={{ backgroundColor: steps[activeStep-1].color }}
+                  >
                     {steps[activeStep-1].icon}
                   </div>
-                  <div className="step-title-group">
-                    <h3>{steps[activeStep-1].title}</h3>
-                    <p className="step-subtitle">Phase {activeStep} of 6</p>
+                  <div>
+                    <h3 className="text-2xl font-heading font-bold text-text-primary mb-1">
+                      {steps[activeStep-1].title}
+                    </h3>
+                    <p className="text-xs text-text-muted uppercase tracking-widest font-semibold">
+                      Phase {activeStep} of 6
+                    </p>
                   </div>
                 </div>
                 
-                <div className="step-body">
-                  <p className="step-description">{steps[activeStep-1].description}</p>
+                <div className="flex-1">
+                  <p className="text-lg leading-relaxed text-text-primary mb-10">
+                    {steps[activeStep-1].description}
+                  </p>
                   
-                  <div className="details-grid">
-                    <h4>Key Activities:</h4>
-                    <ul>
+                  <div>
+                    <h4 className="text-sm font-semibold text-text-secondary uppercase tracking-wider mb-4">
+                      Key Activities:
+                    </h4>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {steps[activeStep-1].details.map((detail, idx) => (
-                        <li key={idx}>
-                          <div className="bullet" style={{ backgroundColor: steps[activeStep-1].color }}></div>
-                          <span>{detail}</span>
+                        <li key={idx} className="flex items-start gap-3 p-4 bg-bg-tertiary/50 border border-border-main rounded-lg transition-colors hover:border-border-focus">
+                          <div 
+                            className="w-2 h-2 rounded-full mt-2 shrink-0"
+                            style={{ backgroundColor: steps[activeStep-1].color }}
+                          ></div>
+                          <span className="text-[0.95rem] text-text-primary leading-tight">{detail}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
                 </div>
                 
-                <div className="step-footer">
-                  <a href="https://www.eci.gov.in/voter-education" target="_blank" rel="noreferrer" className="btn btn-outline" style={{ textDecoration: 'none' }}>
+                <div className="mt-10 flex justify-end gap-4">
+                  <a 
+                    href="https://www.eci.gov.in/voter-education" 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md font-medium transition-all border border-border-main text-text-primary hover:bg-bg-tertiary hover:border-text-muted"
+                  >
                     Read Official Guide
                   </a>
                   <button 
-                    className="btn btn-primary"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md font-medium transition-all bg-primary-main text-white hover:bg-primary-hover hover:-translate-y-[1px]"
                     onClick={() => setActiveStep(prev => prev < 6 ? prev + 1 : 1)}
                   >
                     {activeStep < 6 ? 'Next Step' : 'Back to Start'}
@@ -162,7 +194,6 @@ const Timeline = () => {
           </div>
         </div>
       </div>
-
     </section>
   );
 };
